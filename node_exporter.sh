@@ -3,7 +3,7 @@
 VERSION="1.10.2"
 sudo curl -LO "https://github.com/prometheus/node_exporter/releases/download/v$VERSION/node_exporter-$VERSION.linux-amd64.tar.gz"
 sudo tar xvfz node_exporter-$VERSION.linux-amd64.tar.gz -C /opt/
-sudo mv node_exporter-$VERSION.linux-amd64/node_exporter /opt/node_exporter/
+sudo mv /opt/node_exporter-$VERSION.linux-amd64/node_exporter /opt/node_exporter/
 cat << EOF >node_exporter.service
 [Unit]
 Description=Node Exporter

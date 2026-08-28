@@ -1,35 +1,25 @@
 #!/bin/bash
-set -e
-
+# This script will install Node Exporter with systemd
 VERSION="1.10.2"
-INSTALL_DIR="/opt/node_exporter"
-
-curl -fLO "https://github.com/prometheus/node_exporter/releases/download/v${VERSION}/node_exporter-${VERSION}.linux-amd64.tar.gz"
-
-tar -xzf "node_exporter-${VERSION}.linux-amd64.tar.gz" -C /opt/
-
-mkdir -p "${INSTALL_DIR}"
-
-mv "/opt/node_exporter-${VERSION}.linux-amd64/node_exporter" \
-   "${INSTALL_DIR}/node_exporter"
-
-chmod 0755 "${INSTALL_DIR}/node_exporter"
-
-cat > /etc/systemd/system/node_exporter.service <<EOF
+sudo curl -LO "https://github.com/prometheus/node_exporter/releases/download/v$VERSION/node_exporter-$VERSION.linux-amd64.tar.gz"
+sudo tar xvfz node_exporter-$VERSION.linux-amd64.tar.gz -C /opt/
+sudo mv /opt/node_exporter-$VERSION.linux-amd64/node_exporter /opt/node_exporter/
+cat << EOF >node_exporter.service
 [Unit]
 Description=Node Exporter
-After=network-online.target
-Wants=network-online.target
 
 [Service]
 User=root
-ExecStart=${INSTALL_DIR}/node_exporter
-Restart=on-failure
-RestartSec=5
+ExecStart=/opt/node_exporter/node_exporter
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
 EOF
 
-systemctl daemon-reload
-systemctl enable --now node_exporter
+sudo mv node_exporter.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable node_exporter.service
+sudo systemctl start node_exporter.service
+sudo systemctl status node_exporter.service
+#sudo rm -rf node_exporter-$VERSION.linux-amd64.tar.gz
+#sudo rm -f node_exporter.sh
